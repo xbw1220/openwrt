@@ -1,0 +1,30 @@
+name: openwrt CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: update
+      run: |
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+        
+    - name: menuconfig
+      run: make menuconfig
+      
+    - name: build
+      run: make
+      
+    - name: make distcheck
+      run: make distcheck
+      
+    - name: Upload artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: OpenWrt firmware
+        path: ./bin/
